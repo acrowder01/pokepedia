@@ -1,16 +1,16 @@
- import { useEffect, useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import axios from 'axios'
 // components
 import Nav from './components/Nav'
 // pages
 import Home from './pages/Home'
 import Login from './pages/Login'
-import PokemonList from './pages/PokemonList/index.js'
+import PokemonList from './pages/PokemonList'
 // contexts
 import UserContext from './contexts/UserContext.js'
 // css
 import './App.css';
-import axios from 'axios'
 
 const App = () => {
   // In able for us to use our context, we import first, then we can use the useContext hook to access our context
@@ -18,27 +18,27 @@ const App = () => {
   // console.log(user)
 
   // We will pass on our user to all of App's children via the Provider value prop
-
   const [user, setUser] = useState('')
   const [pokeList, setPokeList] = useState([])
 
-  useEffect(async () => {
+  useEffect(() => {
     fetchPokemon()
-    //Empty array brackets = dependency array, if empty it will call useEffect only once when the DOM component load. 
-     }, [])
 
-   const fetchPokemon = async() => {
+    // Dependency array: if empty, it will call useEffect once only when DOM Component loads
+  }, [])
+
+  const fetchPokemon = async () => {
     try {
-      const response = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=118") 
+      const response = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=1118")
 
-        setPokeList(response.data.results)
-        
-     } catch(error) {
-       console.log(error)
-     }
+      setPokeList(response.data.results)
+      
+    } catch(error) {
+      console.log(error)
+    }
   }
 
-//  console.log('pokeList', pokeList)
+  // console.log('pokeList', pokeList)
 
   return (
     <div className="App">
@@ -51,7 +51,7 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='login' element={<Login setUser={setUser} />} />
-          <Route path='pokemon/list' element={<PokemonList pokeList={pokeList} />} />
+          <Route path='pokemon/list' element={<PokemonList pokeList={pokeList} itemsPerPage={8} />} />
         </Routes>
           
       </UserContext.Provider>
